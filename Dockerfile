@@ -9,7 +9,8 @@ FROM gradle:jdk17 AS build
 WORKDIR /src
 COPY src ./src
 COPY gradle ./gradle
-COPY build.gradle gradlew settings.gradle ./
+COPY build.gradle settings.gradle ./
+COPY --chmod=0755 gradlew ./
 RUN --mount=type=cache,target=/root/.gradle ./gradlew build --console=plain --info --no-daemon --no-watch-fs
 
 FROM base AS final
