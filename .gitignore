@@ -1,0 +1,16 @@
+target/*
+bin/*
+build/*
+.gradle/*
+.settings/*
+.classpath
+.project
+.factorypath
+.attach_pid*
+/target
+.sts4-cache/
+.vscode
+_site/
+*.css
+!petclinic.css
+logs/

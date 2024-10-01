@@ -1,0 +1,59 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id 'org.springframework.boot' version '2.7.18'
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.21'
+    id "com.github.ben-manes.versions" version "0.51.0"
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'org.springframework.samples'
+version = '1.0.0'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+tasks.withType(KotlinCompile) {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext.webjarsFontawesomeVersion = "4.7.0"
+ext.webjarsBootstrapVersion = "5.1.3"
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'javax.cache:cache-api'
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'org.webjars:webjars-locator-core'
+    runtimeOnly "org.webjars.npm:bootstrap:${webjarsBootstrapVersion}"
+    runtimeOnly "org.webjars.npm:font-awesome:${webjarsFontawesomeVersion}"
+    runtimeOnly 'org.ehcache:ehcache'
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.28'
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation 'com.newrelic.agent.java:newrelic-api:8.14.0'
+    implementation 'io.micrometer:micrometer-core:1.10.3'
+
+    //  developmentOnly 'com.newrelic.agent.java:newrelic-java:7.8.0'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+bootRun {
+    jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic.jar"]
+}
