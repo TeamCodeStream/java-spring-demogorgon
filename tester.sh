@@ -17,10 +17,10 @@ while true; do
     sleep 1
     curl -s -o /dev/null http://localhost:8080/clm/http
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/clm/facts/blue
-    sleep 1
-    curl -s -o /dev/null http://localhost:8080/clm/facts/green
-    sleep 1
+    # curl -s -o /dev/null http://localhost:8080/clm/facts/blue
+    # sleep 1
+    # curl -s -o /dev/null http://localhost:8080/clm/facts/green
+    # sleep 1
     curl -s -o /dev/null http://localhost:8080/clm/db
     sleep 1
     curl -s -o /dev/null http://localhost:8080/owners?lastName=
