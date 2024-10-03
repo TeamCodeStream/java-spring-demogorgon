@@ -29,9 +29,6 @@ jobs:
               uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
               with:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-                  tags: |
-                      latest
-                      type=ref,enable=false
 
             - name: Build and push Docker image
               id: push
@@ -39,8 +36,9 @@ jobs:
               with:
                   context: .
                   push: true
-                  tags: ${{ steps.meta.outputs.tags }}
+                  tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
                   labels: ${{ steps.meta.outputs.labels }}
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Generate artifact attestation
               uses: actions/attest-build-provenance@v1
