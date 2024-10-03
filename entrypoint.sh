@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[ -z "$NEW_RELIC_LICENSE_KEY" ] && echo "Need to set NEW_RELIC_LICENSE_KEY" && exit 1;
+
 APP_PID=
 TESTER_PID=
 

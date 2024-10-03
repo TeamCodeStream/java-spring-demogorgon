@@ -21,7 +21,4 @@ COPY ["newrelic/", "./newrelic"]
 COPY --chmod=0755 entrypoint.sh /
 COPY --chmod=0755 tester.sh /app
 
-# Set env vars
-# ENV NEW_RELIC_CONFIG_FILE=/app/newrelic/newrelic.yml
-
 ENTRYPOINT ["/entrypoint.sh"]
