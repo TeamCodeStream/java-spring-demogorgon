@@ -1,0 +1,98 @@
+@import '/src/variables.scss';
+
+.container,
+.container-fluid,
+.container-xxl,
+.container-xl,
+.container-lg,
+.container-md,
+.container-sm {
+  --bs-gutter-x: 1.5rem;
+  --bs-gutter-y: 0;
+  width: 100%;
+  padding-right: calc(var(--bs-gutter-x) * .5);
+  padding-left: calc(var(--bs-gutter-x) * .5);
+  margin-right: auto;
+  margin-left: 0px; 
+  display: flex;
+  align-items: center;
+}
+
+.navbar {
+    border-top: 4px solid $spring-green;
+    background-color: $spring-brown;
+    margin-bottom: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+  
+  .navbar a.navbar-brand {
+    background: url("/src/assets/images/spring-logo-dataflow.png") -1px -1px no-repeat;
+    margin: 12px 0 12px;
+    width: 229px;
+    height: 46px;
+    display: inline-block;
+    text-decoration: none;
+    padding: 0;
+  }
+  
+  .navbar a.navbar-brand span {
+    display: block;
+    width: 229px;
+    height: 46px;
+    background: url("/src/assets/images/spring-logo-dataflow.png") -1px -48px no-repeat;
+    opacity: 0;
+    -moz-transition: opacity 0.12s ease-in-out;
+    -webkit-transition: opacity 0.12s ease-in-out;
+    -o-transition: opacity 0.12s ease-in-out;
+  }
+  
+  .navbar a:hover.navbar-brand span {
+    opacity: 1;
+  }
+  
+  .navbar li > a, .navbar-text {
+    font-family: "montserratregular", sans-serif;
+    text-shadow: none;
+    font-size: 14px;
+    text-decoration: none;
+  
+  /* line-height: 14px; */
+    padding: 28px 20px;
+    transition: all 0.15s;
+    -webkit-transition: all 0.15s;
+    -moz-transition: all 0.15s;
+    -o-transition: all 0.15s;
+    -ms-transition: all 0.15s;
+  }
+  
+  .navbar li > a {
+    text-transform: uppercase;
+    color: $navbar-default-link-color;
+  }
+  .navbar li:hover > a {
+    color: $navbar-default-link-hover-color;
+    background-color: $navbar-default-link-active-bg;
+  }
+  
+  .navbar-brand {
+    text-decoration: none;
+    white-space: nowrap; }
+  
+  .navbar-nav {
+    display: flex;
+    flex-direction: row;
+    list-style: none; 
+    margin-top: 1rem;
+  }
+    .navbar-nav .dropdown-menu {
+      position: static; }
+  
+  .navbar-text {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+    

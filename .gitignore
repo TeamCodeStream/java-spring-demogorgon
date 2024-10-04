@@ -14,3 +14,5 @@ _site/
 *.css
 !petclinic.css
 logs/
+/client/dist
+/client/node_modules
