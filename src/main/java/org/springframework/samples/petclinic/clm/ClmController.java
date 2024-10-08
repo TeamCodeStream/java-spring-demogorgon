@@ -4,11 +4,7 @@ import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.Segment;
 import com.newrelic.api.agent.Trace;
 import io.micrometer.core.annotation.Timed;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -18,9 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.client.RestClient;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.Date;
 
 import static org.springframework.samples.petclinic.Util.*;
@@ -30,10 +25,12 @@ public class ClmController {
 
 	private final OwnerRepository ownerRepository;
 	private final ErrorService errorService;
+	private final RestClient restClient;
 
 	private static final Logger logger = LoggerFactory.getLogger(ClmController.class);
 
-	public ClmController(OwnerRepository ownerRepository, ErrorService errorService) {
+	public ClmController(OwnerRepository ownerRepository, ErrorService errorService, RestClient.Builder restClientBuilder) {
+		this.restClient = restClientBuilder.build();
 		this.ownerRepository = ownerRepository;
 		this.errorService = errorService;
 	}
@@ -160,13 +157,10 @@ public class ClmController {
 		final var sw = new StopWatch();
 		logger.info("httpMethod()");
 		sw.start();
-		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-			HttpGet get = new HttpGet("http://example.com");
-			try (CloseableHttpResponse execute = httpClient.execute(get)) {
-				StatusLine statusLine = execute.getStatusLine();
-				System.out.println(statusLine);
-			}
-		} catch (IOException e) {
+		try{
+		final var status = this.restClient.get().uri("https://google.com").retrieve().toBodilessEntity();
+		System.out.printf("Status Code: %s", status.getStatusCode());
+		} catch (Exception e) {
 			MetricService.increaseCount("httpMethod() error");
 			throw new RuntimeException(e);
 		}

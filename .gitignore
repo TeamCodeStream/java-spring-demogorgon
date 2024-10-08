@@ -16,3 +16,4 @@ _site/
 logs/
 /client/dist
 /client/node_modules
+.idea/

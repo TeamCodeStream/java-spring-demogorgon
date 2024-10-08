@@ -17,10 +17,10 @@ package org.springframework.samples.petclinic.owner;
 
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.BaseEntity;
@@ -39,7 +39,7 @@ public class Visit extends BaseEntity {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;
 
-	@NotEmpty
+	@NotBlank
 	private String description;
 
 	/**

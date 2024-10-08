@@ -17,7 +17,7 @@ package org.springframework.samples.petclinic.owner;
 
 import java.util.Map;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 /**
  * @author Juergen Hoeller
  * @author Ken Krebs
@@ -71,7 +72,7 @@ class VisitController {
 	// Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is
 	// called
 	@GetMapping("/owners/{ownerId}/pets/{petId}/visits/new")
-	public String initNewVisitForm(@PathVariable("petId") int petId, Map<String, Object> model) {
+	public String initNewVisitForm() {
 		return "pets/createOrUpdateVisitForm";
 	}
 
@@ -79,15 +80,15 @@ class VisitController {
 	// called
 	@PostMapping("/owners/{ownerId}/pets/{petId}/visits/new")
 	public String processNewVisitForm(@ModelAttribute Owner owner, @PathVariable int petId, @Valid Visit visit,
-			BindingResult result) {
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			return "pets/createOrUpdateVisitForm";
 		}
-		else {
-			owner.addVisit(petId, visit);
-			this.owners.save(owner);
-			return "redirect:/owners/{ownerId}";
-		}
+
+		owner.addVisit(petId, visit);
+		this.owners.save(owner);
+		redirectAttributes.addFlashAttribute("message", "Your visit has been booked");
+		return "redirect:/owners/{ownerId}";
 	}
 
 }
