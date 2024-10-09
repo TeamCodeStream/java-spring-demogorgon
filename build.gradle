@@ -32,8 +32,6 @@ ext.webjarsFontawesomeVersion = "4.7.0"
 ext.webjarsBootstrapVersion = "5.3.3"
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.34'
-
     implementation 'io.micrometer:micrometer-core:1.13.5'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -44,7 +42,6 @@ dependencies {
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
     implementation 'com.newrelic.agent.java:newrelic-api:8.15.0'
     implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
-    implementation 'org.mapstruct:mapstruct:1.6.2'
 
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly "org.webjars.npm:bootstrap:${webjarsBootstrapVersion}"
