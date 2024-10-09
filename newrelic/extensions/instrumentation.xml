@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension xmlns="https://newrelic.com/docs/java/xsd/v1.0"
 		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		   xsi:schemaLocation="newrelic-extension extension.xsd "
+		   xsi:schemaLocation="newrelic-extension ../extension.xsd "
 		   name="customExtension" version="1.0">
 	<instrumentation metricPrefix="EXAMPLE">
 		<pointcut transactionStartPoint="true">
