@@ -52,8 +52,8 @@ dependencies {
 }
 
 bootRun {
-    dependsOn 'buildFrontEnd','build'
-    mustRunAfter 'buildFrontEnd','build'
+    dependsOn 'downloadNewRelicAgent','buildFrontEnd','build'
+    mustRunAfter 'downloadNewRelicAgent','buildFrontEnd','build'
 
     jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic.jar"]
 }
@@ -83,6 +83,19 @@ tasks.register('buildFrontEnd', DefaultTask){
 }
 
 tasks.register('downloadNewRelicAgent', DefaultTask) {
+    onlyIf {
+        def agentExists = file('newrelic/newrelic.jar').exists()
+        def agentDoesNotExist = !agentExists
+
+        if(agentDoesNotExist){
+            println "Downloading Current Java Agent..."
+        } else {
+            println "Found Local Java Agent; Skipping Task (delete newrelic.jar to force the download again)"
+        }
+
+        return agentDoesNotExist
+    }
+
     doFirst {
         mkdir 'newrelic'
         def fileUrl = 'https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip'
