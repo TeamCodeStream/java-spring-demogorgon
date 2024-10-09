@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.excpetionhandling;
+package org.springframework.samples.petclinic.exceptionhandling;
 
 import java.util.HashMap;
 import java.util.List;
