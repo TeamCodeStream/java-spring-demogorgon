@@ -20,6 +20,10 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'kotlin'
 
+ext {
+    newrelic_version = '8.15.0'
+}
+
 group = 'org.springframework.samples'
 version = '1.0.0'
 
@@ -40,7 +44,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'javax.cache:cache-api'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
-    implementation 'com.newrelic.agent.java:newrelic-api:8.15.0'
+    implementation "com.newrelic.agent.java:newrelic-api:$newrelic_version"
     implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
@@ -55,7 +59,7 @@ bootRun {
     dependsOn 'downloadNewRelicAgent','buildFrontEnd','build'
     mustRunAfter 'downloadNewRelicAgent','buildFrontEnd','build'
 
-    jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic.jar"]
+    jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic-v${newrelic_version}.jar"]
 }
 
 tasks.register('buildFrontEnd', DefaultTask){
@@ -84,13 +88,13 @@ tasks.register('buildFrontEnd', DefaultTask){
 
 tasks.register('downloadNewRelicAgent', DefaultTask) {
     onlyIf {
-        def agentExists = file('newrelic/newrelic.jar').exists()
+        def agentExists = file("newrelic/newrelic-v${newrelic_version}.jar").exists()
         def agentDoesNotExist = !agentExists
 
         if(agentDoesNotExist){
-            println "Downloading Current Java Agent..."
+            println "Downloading New Relic Java Agent v${newrelic_version}..."
         } else {
-            println "Found Local Java Agent; Skipping Task (delete newrelic.jar to force the download again)"
+            println "Found Local Java Agent v${newrelic_version}; Skipping Task (delete newrelic.jar to force the download again)"
         }
 
         return agentDoesNotExist
@@ -98,7 +102,7 @@ tasks.register('downloadNewRelicAgent', DefaultTask) {
 
     doFirst {
         mkdir 'newrelic'
-        def fileUrl = 'https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip'
+        def fileUrl = "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java-${newrelic_version}.zip"
         def destinationFile = file("$rootDir/newrelic/newrelic.zip")
 
         new URL(fileUrl).withInputStream { inputStream ->
@@ -120,6 +124,8 @@ tasks.register('downloadNewRelicAgent', DefaultTask) {
             exclude("newrelic/newrelic-api-javadoc.jar")
             exclude("newrelic/newrelic-api-sources.jar")
         }
+
+        file("newrelic/newrelic.jar").renameTo("newrelic/newrelic-v${newrelic_version}.jar")
 
         delete("newrelic/newrelic.zip")
     }
