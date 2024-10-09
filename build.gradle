@@ -54,57 +54,60 @@ dependencies {
 }
 
 bootRun {
-    dependsOn 'buildReact','moveFrontEnd','build'
-    mustRunAfter 'buildReact','moveFrontEnd','build'
+    dependsOn 'buildFrontEnd','build'
+    mustRunAfter 'buildFrontEnd','build'
 
     jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic.jar"]
 }
 
-tasks.register('buildReact', Exec){
-    String cmd = 'npm';
-    if (Os.isFamily(Os.FAMILY_WINDOWS)){
-        cmd = "npm.cmd";
-    }
-
-    workingDir 'client/'
-    commandLine cmd, 'run', 'build'
-}
-
-tasks.register("moveFrontEnd", Copy){
-    dependsOn 'buildReact'
-    mustRunAfter 'buildReact'
-
+tasks.register('buildFrontEnd', DefaultTask){
     doFirst {
-        delete 'src/main/resources/static/resources/react'
+        exec {
+            String cmd = 'npm';
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                cmd = "npm.cmd";
+            }
+
+            workingDir 'client/'
+            commandLine cmd, 'run', 'build'
+        }
     }
 
     andThen {
+        delete 'src/main/resources/static/resources/react'
         mkdir 'src/main/resources/static/resources/react'
     }
 
     doLast {
-        from "client/dist"
-        into "src/main/resources/static/resources/react"
+        copy {
+            from "client/dist"
+            into "src/main/resources/static/resources/react"
+        }
     }
 }
 
-tasks.register('downloadNewRelicAgent', Download) {
-    mkdir 'newrelic'
-    src 'https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip'
-    dest file('newrelic')
-}
+tasks.register('downloadNewRelicAgent', DefaultTask) {
+    doFirst {
+        mkdir 'newrelic'
+        def fileUrl = 'https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip'
+        def destinationFile = file("$rootDir/newrelic/newrelic.zip")
 
-tasks.register('unzipNewRelicAgent', Copy) {
-    dependsOn 'downloadNewRelicAgent'
-    mustRunAfter 'downloadNewRelicAgent'
+        new URL(fileUrl).withInputStream { inputStream ->
+            destinationFile.withOutputStream { outputStream ->
+                outputStream << inputStream
+            }
+        }
+    }
 
-    from zipTree(file('newrelic/newrelic-java.zip'))
-    into rootDir
-    exclude("newrelic/newrelic.yml")
+    copy {
+        from zipTree(file('newrelic/newrelic.zip'))
+        into rootDir
+        exclude("newrelic/newrelic.yml")
+    }
 
     doLast {
         delete("newrelic/LICENSE")
-        delete("newrelic/newrelic-java.zip")
+        delete("newrelic/newrelic.zip")
         delete("newrelic/THIRD_PARTY_NOTICES.md")
         delete("newrelic/extension-example.xml")
         delete("newrelic/newrelic-api.jar")
