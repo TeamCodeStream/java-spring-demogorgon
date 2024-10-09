@@ -17,3 +17,5 @@ logs/
 /client/dist
 /client/node_modules
 .idea/
+
+src/main/resources/static/resources/react/

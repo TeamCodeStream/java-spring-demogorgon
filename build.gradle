@@ -1,5 +1,8 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     ext.kotlin_version = '2.0.20'
+
     repositories {
         mavenCentral()
     }
@@ -7,6 +10,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+
 
 plugins {
     id 'java'
@@ -21,15 +25,13 @@ apply plugin: 'kotlin'
 group = 'org.springframework.samples'
 version = '1.0.0'
 
-java {
+kotlin {
+    jvmToolchain(17)
 }
 
 repositories {
     mavenCentral()
 }
-
-ext.webjarsFontawesomeVersion = "4.7.0"
-ext.webjarsBootstrapVersion = "5.3.3"
 
 dependencies {
     implementation 'io.micrometer:micrometer-core:1.13.5'
@@ -44,8 +46,6 @@ dependencies {
     implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
-    runtimeOnly "org.webjars.npm:bootstrap:${webjarsBootstrapVersion}"
-    runtimeOnly "org.webjars.npm:font-awesome:${webjarsFontawesomeVersion}"
     runtimeOnly 'com.github.ben-manes.caffeine:caffeine'
     runtimeOnly 'com.h2database:h2'
 
@@ -54,19 +54,56 @@ dependencies {
 }
 
 bootRun {
+    dependsOn 'buildReact'
+    mustRunAfter 'buildReact'
+
     jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic.jar"]
 }
 
-tasks.register('downloadNewrelic', Download) {
+tasks.register('buildReact', Exec){
+    dependsOn 'build'
+    mustRunAfter 'build'
+
+    String cmd = 'npm';
+    if (Os.isFamily(Os.FAMILY_WINDOWS)){
+        cmd = "npm.cmd";
+    }
+
+    workingDir 'client/'
+    commandLine cmd, 'run', 'build'
+}
+
+tasks.register("moveFrontEnd", Copy){
+    dependsOn 'buildReact'
+    mustRunAfter 'buildReact'
+
+    mkdir 'src/main/resources/static/resources/react'
+
+    from "client/dist"
+    into "src/main/resources/static/resources/react"
+}
+
+tasks.register('downloadNewRelicAgent', Download) {
     mkdir 'newrelic'
     src 'https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip'
     dest file('newrelic')
 }
 
-tasks.register('unzipNewrelic', Copy) {
+tasks.register('unzipNewRelicAgent', Copy) {
+    dependsOn 'downloadNewRelicAgent'
+    mustRunAfter 'downloadNewRelicAgent'
+
     from zipTree(file('newrelic/newrelic-java.zip'))
     into rootDir
-}
-kotlin {
-    jvmToolchain(17)
+    exclude("newrelic/newrelic.yml")
+
+    doLast {
+        delete("newrelic/LICENSE")
+        delete("newrelic/newrelic-java.zip")
+        delete("newrelic/THIRD_PARTY_NOTICES.md")
+        delete("newrelic/extension-example.xml")
+        delete("newrelic/newrelic-api.jar")
+        delete("newrelic/newrelic-api-javadoc.jar")
+        delete("newrelic/newrelic-api-sources.jar")
+    }
 }
