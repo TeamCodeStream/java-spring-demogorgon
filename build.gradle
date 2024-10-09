@@ -89,6 +89,7 @@ tasks.register('buildFrontEnd', DefaultTask){
 
 tasks.register('downloadNewRelicAgent', DefaultTask) {
     group 'New Relic'
+
     onlyIf {
         def agentExists = file("newrelic/newrelic-v${newrelic_version}.jar").exists()
         def agentDoesNotExist = !agentExists
@@ -96,7 +97,8 @@ tasks.register('downloadNewRelicAgent', DefaultTask) {
         if(agentDoesNotExist){
             println "Downloading New Relic Java Agent v${newrelic_version}..."
         } else {
-            println "Found Local Java Agent v${newrelic_version}; Skipping Task (delete newrelic.jar to force the download again)"
+            println "Found Local Java Agent v${newrelic_version}; Skipping Task (delete " +
+                    "newrelic-v${newrelic_version}.jar to force the download again)"
         }
 
         return agentDoesNotExist
@@ -104,6 +106,10 @@ tasks.register('downloadNewRelicAgent', DefaultTask) {
 
     doFirst {
         mkdir 'newrelic'
+        delete(fileTree("newrelic") {
+            include("**/newrelic-v*.jar")
+        })
+
         def fileUrl = "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java-${newrelic_version}.zip"
         def destinationFile = file("$rootDir/newrelic/newrelic.zip")
 
