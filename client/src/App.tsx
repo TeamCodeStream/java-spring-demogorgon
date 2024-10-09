@@ -29,7 +29,7 @@ function App() {
           icon={false}
         />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route index={true} path="/" element={<Home />} />
           <Route path="/oups" element={<Error />} />
           <Route path="/home" element={<Home />} />
           <Route path="/vets" element={<Veterinarians />} />

@@ -19,3 +19,5 @@ logs/
 .idea/
 
 src/main/resources/static/resources/react/
+
+.kotlin/*

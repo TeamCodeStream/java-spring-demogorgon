@@ -54,16 +54,13 @@ dependencies {
 }
 
 bootRun {
-    dependsOn 'buildReact'
-    mustRunAfter 'buildReact'
+    dependsOn 'buildReact','moveFrontEnd','build'
+    mustRunAfter 'buildReact','moveFrontEnd','build'
 
     jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic.jar"]
 }
 
 tasks.register('buildReact', Exec){
-    dependsOn 'build'
-    mustRunAfter 'build'
-
     String cmd = 'npm';
     if (Os.isFamily(Os.FAMILY_WINDOWS)){
         cmd = "npm.cmd";
@@ -77,10 +74,18 @@ tasks.register("moveFrontEnd", Copy){
     dependsOn 'buildReact'
     mustRunAfter 'buildReact'
 
-    mkdir 'src/main/resources/static/resources/react'
+    doFirst {
+        delete 'src/main/resources/static/resources/react'
+    }
 
-    from "client/dist"
-    into "src/main/resources/static/resources/react"
+    andThen {
+        mkdir 'src/main/resources/static/resources/react'
+    }
+
+    doLast {
+        from "client/dist"
+        into "src/main/resources/static/resources/react"
+    }
 }
 
 tasks.register('downloadNewRelicAgent', Download) {
