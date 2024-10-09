@@ -11,12 +11,10 @@ buildscript {
     }
 }
 
-
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
-    id "de.undercouch.download" version "5.3.0"
 }
 
 apply plugin: 'java'
@@ -73,12 +71,10 @@ tasks.register('buildFrontEnd', DefaultTask){
         }
     }
 
-    andThen {
+    doLast {
         delete 'src/main/resources/static/resources/react'
         mkdir 'src/main/resources/static/resources/react'
-    }
 
-    doLast {
         copy {
             from "client/dist"
             into "src/main/resources/static/resources/react"
@@ -99,19 +95,19 @@ tasks.register('downloadNewRelicAgent', DefaultTask) {
         }
     }
 
-    copy {
-        from zipTree(file('newrelic/newrelic.zip'))
-        into rootDir
-        exclude("newrelic/newrelic.yml")
-    }
-
     doLast {
-        delete("newrelic/LICENSE")
+        copy {
+            from zipTree(file('newrelic/newrelic.zip'))
+            into rootDir
+            exclude("newrelic/newrelic.yml")
+            exclude("newrelic/LICENSE")
+            exclude("newrelic/THIRD_PARTY_NOTICES.md")
+            exclude("newrelic/extension-example.xml")
+            exclude("newrelic/newrelic-api.jar")
+            exclude("newrelic/newrelic-api-javadoc.jar")
+            exclude("newrelic/newrelic-api-sources.jar")
+        }
+
         delete("newrelic/newrelic.zip")
-        delete("newrelic/THIRD_PARTY_NOTICES.md")
-        delete("newrelic/extension-example.xml")
-        delete("newrelic/newrelic-api.jar")
-        delete("newrelic/newrelic-api-javadoc.jar")
-        delete("newrelic/newrelic-api-sources.jar")
     }
 }
