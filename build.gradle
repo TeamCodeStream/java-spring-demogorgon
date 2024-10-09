@@ -63,6 +63,7 @@ bootRun {
 }
 
 tasks.register('buildFrontEnd', DefaultTask){
+    group 'New Relic'
     doFirst {
         exec {
             String cmd = 'npm';
@@ -87,6 +88,7 @@ tasks.register('buildFrontEnd', DefaultTask){
 }
 
 tasks.register('downloadNewRelicAgent', DefaultTask) {
+    group 'New Relic'
     onlyIf {
         def agentExists = file("newrelic/newrelic-v${newrelic_version}.jar").exists()
         def agentDoesNotExist = !agentExists
