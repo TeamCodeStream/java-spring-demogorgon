@@ -36,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.micrometer:micrometer-core:1.13.5'
+    implementation 'io.micrometer:micrometer-core'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -44,15 +44,15 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'javax.cache:cache-api'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
+    implementation 'jakarta.annotation:jakarta.annotation-api'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "com.newrelic.agent.java:newrelic-api:$newrelic_version"
-    implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly 'com.github.ben-manes.caffeine:caffeine'
     runtimeOnly 'com.h2database:h2'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 bootRun {
