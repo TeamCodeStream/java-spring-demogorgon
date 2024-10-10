@@ -3,7 +3,7 @@ FROM gradle:jdk17 AS base
 RUN apt-get update && apt-get install -y curl
 
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 8081
 
 FROM gradle:jdk17 AS build
 WORKDIR /src
