@@ -56,13 +56,13 @@ dependencies {
 }
 
 bootRun {
-    dependsOn 'downloadNewRelicAgent','buildFrontEnd','build'
-    mustRunAfter 'downloadNewRelicAgent','buildFrontEnd','build'
+    dependsOn 'downloadNewRelicAgent', 'buildFrontEnd', 'build'
+    mustRunAfter 'downloadNewRelicAgent', 'buildFrontEnd', 'build'
 
     jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic-v${newrelic_version}.jar"]
 }
 
-tasks.register('buildFrontEnd', DefaultTask){
+tasks.register('buildFrontEnd', DefaultTask) {
     group 'New Relic'
     doFirst {
         exec {
@@ -75,12 +75,13 @@ tasks.register('buildFrontEnd', DefaultTask){
             commandLine cmd, 'run', 'build'
         }
 
-        delete 'src/main/resources/static/resources/react'
-        mkdir 'src/main/resources/static/resources/react'
+        delete 'src/main/resources/static/assets'
+        delete 'src/main/resources/static/index.html'
+        mkdir 'src/main/resources/static/assets'
 
         copy {
             from "client/dist"
-            into "src/main/resources/static/resources/react"
+            into "src/main/resources/static"
         }
     }
 
@@ -91,20 +92,20 @@ tasks.register('buildFrontEnd', DefaultTask){
         def newRelicAgentId = System.getenv('NEW_RELIC_AGENT_ID')
         def newRelicApplicationId = System.getenv('NEW_RELIC_APPLICATION_ID')
 
-        if(newRelicTrustKey == null && newRelicAccountId != null){
+        if (newRelicTrustKey == null && newRelicAccountId != null) {
             newRelicTrustKey = newRelicAccountId
         }
 
-        if(newRelicAgentId == null && newRelicApplicationId != null){
+        if (newRelicAgentId == null && newRelicApplicationId != null) {
             newRelicAgentId = newRelicApplicationId
         }
 
-        if(newRelicLicenseKey == null || newRelicAccountId == null || newRelicTrustKey == null || newRelicAgentId == null || newRelicApplicationId == null){
+        if (newRelicLicenseKey == null || newRelicAccountId == null || newRelicTrustKey == null || newRelicAgentId == null || newRelicApplicationId == null) {
             throw new GradleException('NEW_RELIC_* ENVIRONMENT VARIABLES NOT SET')
         }
 
         def templateJavaScript = file("$rootDir/browserMonitoringTemplate.js");
-        def indexFile = file("$rootDir/src/main/resources/static/resources/react/index.html")
+        def indexFile = file("$rootDir/src/main/resources/static/index.html")
 
         def indexFileContents = indexFile.getText()
         def templateContents = templateJavaScript.getText()
@@ -129,7 +130,7 @@ tasks.register('downloadNewRelicAgent', DefaultTask) {
         def agentExists = file("newrelic/newrelic-v${newrelic_version}.jar").exists()
         def agentDoesNotExist = !agentExists
 
-        if(agentDoesNotExist){
+        if (agentDoesNotExist) {
             println "Downloading New Relic Java Agent v${newrelic_version}..."
         } else {
             println "Found Local Java Agent v${newrelic_version}; Skipping Task (delete " +

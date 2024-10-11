@@ -21,7 +21,9 @@ NEW_RELIC_LICENSE_KEY=12345 ./gradlew bootRun
 ```
 Substitute 12345 with your New Relic license key.
 
-You can then access petclinic here: http://localhost:8080/
+You can then access petclinic here:
+- react: http://localhost:8081
+- legacy app: http://localhost:8081/welcome
 
 The main page will have some links that exercise auto and manual instrumentation in different modes.
 

@@ -18,7 +18,8 @@ logs/
 /client/node_modules
 .idea/
 
-src/main/resources/static/resources/react/
+src/main/resources/static/assets
+src/main/resources/static/index.html
 
 .kotlin/*
 
