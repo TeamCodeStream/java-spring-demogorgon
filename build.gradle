@@ -74,9 +74,7 @@ tasks.register('buildFrontEnd', DefaultTask){
             workingDir 'client/'
             commandLine cmd, 'run', 'build'
         }
-    }
 
-    doLast {
         delete 'src/main/resources/static/resources/react'
         mkdir 'src/main/resources/static/resources/react'
 
@@ -84,6 +82,43 @@ tasks.register('buildFrontEnd', DefaultTask){
             from "client/dist"
             into "src/main/resources/static/resources/react"
         }
+    }
+
+    doLast {
+        def newRelicLicenseKey = System.getenv('NEW_RELIC_LICENSE_KEY')
+        def newRelicAccountId = System.getenv('NEW_RELIC_ACCOUNT_ID')
+        def newRelicTrustKey = System.getenv('NEW_RELIC_TRUST_KEY')
+        def newRelicAgentId = System.getenv('NEW_RELIC_AGENT_ID')
+        def newRelicApplicationId = System.getenv('NEW_RELIC_APPLICATION_ID')
+
+        if(newRelicTrustKey == null && newRelicAccountId != null){
+            newRelicTrustKey = newRelicAccountId
+        }
+
+        if(newRelicAgentId == null && newRelicApplicationId != null){
+            newRelicAgentId = newRelicApplicationId
+        }
+
+        if(newRelicLicenseKey == null || newRelicAccountId == null || newRelicTrustKey == null || newRelicAgentId == null || newRelicApplicationId == null){
+            throw new GradleException('NEW_RELIC_* ENVIRONMENT VARIABLES NOT SET')
+        }
+
+        def templateJavaScript = file("$rootDir/browserMonitoringTemplate.js");
+        def indexFile = file("$rootDir/src/main/resources/static/resources/react/index.html")
+
+        def indexFileContents = indexFile.getText()
+        def templateContents = templateJavaScript.getText()
+
+        templateContents = templateContents.replace("{{NEW_RELIC_APPLICATION_ID}}", newRelicApplicationId)
+        templateContents = templateContents.replace("{{NEW_RELIC_AGENT_ID}}", newRelicAgentId)
+        templateContents = templateContents.replace("{{NEW_RELIC_ACCOUNT_ID}}", newRelicAccountId)
+        templateContents = templateContents.replace("{{NEW_RELIC_TRUST_KEY}}", newRelicTrustKey)
+        templateContents = templateContents.replace("{{NEW_RELIC_LICENSE_KEY}}", newRelicLicenseKey)
+
+        templateContents = "<script type=\"text/javascript\">\n" + templateContents + "\n</script>"
+        def newIndexFileContent = indexFileContents.replace("<script id=\"new-relic-template\"><!-- FILLED OUT DURING BUILD --></script>", templateContents)
+
+        indexFile.write(newIndexFileContent)
     }
 }
 
