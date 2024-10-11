@@ -16,7 +16,7 @@ cleanup() {
 trap cleanup INT TERM
 
 # start app
-nohup java -Xmx3g -Xms3g -javaagent:/app/newrelic/newrelic-v8.15.0.jar -jar java-spring-demogorgon-1.0.0.jar &
+nohup java -Xmx3g -Xms3g -javaagent:/app/newrelic/newrelic-v8.15.0.jar -jar petclinic-backend-1.0.0.jar &
 APP_PID=$!
 
 # generate load

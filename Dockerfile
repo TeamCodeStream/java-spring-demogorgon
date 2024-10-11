@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/root/.gradle ./gradlew build --console=plain --in
 
 FROM base AS final
 WORKDIR /app
-COPY --from=build /src/build/libs/java-spring-demogorgon-1.0.0.jar .
+COPY --from=build /src/build/libs/petclinic-backend-1.0.0.jar .
 COPY ["newrelic/", "./newrelic"]
 
 COPY --chmod=0755 entrypoint.sh /
