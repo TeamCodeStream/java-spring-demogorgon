@@ -63,13 +63,11 @@ tasks.register('buildFrontEnd', DefaultTask) {
             commandLine cmd, 'run', 'build'
         }
 
-        delete 'src/main/resources/static/assets'
-        delete 'src/main/resources/static/index.html'
-        mkdir 'src/main/resources/static/assets'
+        delete 'src/main/resources/static/react'
 
         copy {
             from "client/dist"
-            into "src/main/resources/static"
+            into "src/main/resources/static/react"
         }
     }
 
@@ -93,7 +91,7 @@ tasks.register('buildFrontEnd', DefaultTask) {
         }
 
         def templateJavaScript = file("$rootDir/browserMonitoringTemplate.js")
-        def indexFile = file("$rootDir/src/main/resources/static/index.html")
+        def indexFile = file("$rootDir/src/main/resources/static/react/index.html")
 
         def indexFileContents = indexFile.getText()
         def templateContents = templateJavaScript.getText()
@@ -110,8 +108,8 @@ tasks.register('buildFrontEnd', DefaultTask) {
         indexFile.write(newIndexFileContent)
     }
 
-    outputs.file('src/main/resources/static/index.html')
-    outputs.dir('src/main/resources/static/assets')
+    outputs.file('src/main/resources/static/react/index.html')
+    outputs.dir('src/main/resources/static/react/assets')
 }
 
 tasks.register('downloadNewRelicAgent', DefaultTask) {

@@ -10,7 +10,7 @@ import './index.scss';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={"/react"}>
       <ApiProvider api={ownersApi}>
         <App />
       </ApiProvider>
