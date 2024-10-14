@@ -55,6 +55,11 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 }
 
+build {
+    dependsOn 'buildFrontEnd'
+    mustRunAfter 'buildFrontEnd'
+}
+
 bootRun {
     dependsOn 'downloadNewRelicAgent', 'buildFrontEnd', 'build'
     mustRunAfter 'downloadNewRelicAgent', 'buildFrontEnd', 'build'
@@ -66,12 +71,12 @@ tasks.register('buildFrontEnd', DefaultTask) {
     group 'New Relic'
     doFirst {
         exec {
-            String cmd = 'npm';
+            String cmd = 'npm'
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                cmd = "npm.cmd";
+                cmd = "npm.cmd"
             }
 
-            workingDir 'client/'
+            workingDir "$rootDir/client"
             commandLine cmd, 'run', 'build'
         }
 
@@ -86,11 +91,11 @@ tasks.register('buildFrontEnd', DefaultTask) {
     }
 
     doLast {
-        def newRelicLicenseKey = System.getenv('NEW_RELIC_LICENSE_KEY')
-        def newRelicAccountId = System.getenv('NEW_RELIC_ACCOUNT_ID')
-        def newRelicTrustKey = System.getenv('NEW_RELIC_TRUST_KEY')
-        def newRelicAgentId = System.getenv('NEW_RELIC_AGENT_ID')
-        def newRelicApplicationId = System.getenv('NEW_RELIC_APPLICATION_ID')
+        def newRelicLicenseKey = System.getenv('BROWSER_LICENSE_KEY')
+        def newRelicAccountId = System.getenv('BROWSER_ACCOUNT_ID')
+        def newRelicTrustKey = System.getenv('BROWSER_TRUST_KEY')
+        def newRelicAgentId = System.getenv('BROWSER_AGENT_ID')
+        def newRelicApplicationId = System.getenv('BROWSER_APPLICATION_ID')
 
         if (newRelicTrustKey == null && newRelicAccountId != null) {
             newRelicTrustKey = newRelicAccountId
@@ -101,10 +106,10 @@ tasks.register('buildFrontEnd', DefaultTask) {
         }
 
         if (newRelicLicenseKey == null || newRelicAccountId == null || newRelicTrustKey == null || newRelicAgentId == null || newRelicApplicationId == null) {
-            throw new GradleException('NEW_RELIC_* ENVIRONMENT VARIABLES NOT SET')
+            throw new GradleException('BROWSER_* ENVIRONMENT VARIABLES NOT SET')
         }
 
-        def templateJavaScript = file("$rootDir/browserMonitoringTemplate.js");
+        def templateJavaScript = file("$rootDir/browserMonitoringTemplate.js")
         def indexFile = file("$rootDir/src/main/resources/static/index.html")
 
         def indexFileContents = indexFile.getText()
@@ -121,6 +126,9 @@ tasks.register('buildFrontEnd', DefaultTask) {
 
         indexFile.write(newIndexFileContent)
     }
+
+    outputs.file('src/main/resources/static/index.html')
+    outputs.dir('src/main/resources/static/assets')
 }
 
 tasks.register('downloadNewRelicAgent', DefaultTask) {
