@@ -1,16 +1,5 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
-buildscript {
-    ext.kotlin_version = '2.0.20'
-
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
@@ -18,7 +7,6 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'kotlin'
 
 ext {
     newrelic_version = '8.15.0'
@@ -26,10 +14,6 @@ ext {
 
 group = 'org.springframework.samples'
 version = '1.0.0'
-
-kotlin {
-    jvmToolchain(17)
-}
 
 repositories {
     mavenCentral()
@@ -45,7 +29,6 @@ dependencies {
     implementation 'javax.cache:cache-api'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
     implementation 'jakarta.annotation:jakarta.annotation-api'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "com.newrelic.agent.java:newrelic-api:$newrelic_version"
 
     runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
