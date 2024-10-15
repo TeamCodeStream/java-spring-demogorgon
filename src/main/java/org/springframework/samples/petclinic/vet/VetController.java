@@ -69,6 +69,10 @@ class VetController {
 	}
 
 	private Page<Vet> findPaginated(int page) {
+		if(page < 1) {
+			// defensive programming
+			throw new IllegalArgumentException("Page must be greater than 0");
+		}
 		int pageSize = 5;
 		Pageable pageable = PageRequest.of(page - 1, pageSize);
 		return vetRepository.findAll(pageable);
@@ -89,7 +93,6 @@ class VetController {
 
 	@GetMapping("/vets/{lastName}")
 	public @ResponseBody Vets showResourcesVetList(@PathVariable(name = "lastName") String lastName) {
-		// This will throw when exercised from tester.sh as the Vet we send in has no specialties. Poor guy.
 		Vets vets = new Vets();
 		Collection<Vet> vetList = this.vetRepository.findByLastName(lastName);
 		for (Vet vet : vetList) {

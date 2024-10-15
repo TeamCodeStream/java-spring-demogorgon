@@ -136,6 +136,10 @@ class OwnerController {
 	}
 
 	private Page<Owner> findPaginatedForOwnersLastName(int page, String lastname) {
+		if(page < 1){
+			// defensive programming
+			throw new IllegalArgumentException("Page must be greater than 0");
+		}
 
 		int pageSize = 5;
 		Pageable pageable = PageRequest.of(page - 1, pageSize);
