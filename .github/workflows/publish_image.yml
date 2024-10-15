@@ -41,6 +41,12 @@ jobs:
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
                   github-token: ${{ secrets.GITHUB_TOKEN }}
+                  build-args: |
+                    BROWSER_LICENSE_KEY=${{ secrets.BROWSER_LICENSE_KEY }},
+                    BROWSER_ACCOUNT_ID=${{ secrets.BROWSER_ACCOUNT_ID }},
+                    BROWSER_TRUST_KEY=${{ secrets.BROWSER_TRUST_KEY }},
+                    BROWSER_AGENT_ID=${{ secrets.BROWSER_AGENT_ID }},
+                    BROWSER_APPLICATION_ID=${{ secrets.BROWSER_APPLICATION_ID }}
 
             - name: Generate artifact attestation
               uses: actions/attest-build-provenance@v1

@@ -5,35 +5,35 @@ sleep 10
 echo "Running automated tests..."
 
 while true; do
-    curl -s -o /dev/null http://localhost:8080/clm/auto-only
+    curl -s -o /dev/null http://localhost:8081/clm/auto-only
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/clm/annotation
+    curl -s -o /dev/null http://localhost:8081/clm/annotation
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/clm/api
+    curl -s -o /dev/null http://localhost:8081/clm/api
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/clm/xml
+    curl -s -o /dev/null http://localhost:8081/clm/xml
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/clm/static
+    curl -s -o /dev/null http://localhost:8081/clm/static
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/clm/http
+    curl -s -o /dev/null http://localhost:8081/clm/http
     sleep 1
-    # curl -s -o /dev/null http://localhost:8080/clm/facts/blue
+    # curl -s -o /dev/null http://localhost:8081/clm/facts/blue
     # sleep 1
-    # curl -s -o /dev/null http://localhost:8080/clm/facts/green
+    # curl -s -o /dev/null http://localhost:8081/clm/facts/green
     # sleep 1
-    curl -s -o /dev/null http://localhost:8080/clm/db
+    curl -s -o /dev/null http://localhost:8081/clm/db
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/owners?lastName=
+    curl -s -o /dev/null http://localhost:8081/owners?lastName=
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/owners/4
+    curl -s -o /dev/null http://localhost:8081/owners/4
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/vets.html
+    curl -s -o /dev/null http://localhost:8081/vets.html
     sleep 1
-    curl -s -o /dev/null http://localhost:8080/vets
+    curl -s -o /dev/null http://localhost:8081/vets
     sleep 1
-    # curl -s -o /dev/null http://localhost:8080/oups
+    # curl -s -o /dev/null http://localhost:8081/oups
     # sleep 1
-    curl -s -o /dev/null http://localhost:8080/clm/error
+    curl -s -o /dev/null http://localhost:8081/clm/error
     sleep 1
 
     timestamp=$(date +"%Y-%m-%dT%H:%M:%S%z")

@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.samples.petclinic.owner.OwnerRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 
 @Component
 class ClmJobs(private val ownerRepository: OwnerRepository) {

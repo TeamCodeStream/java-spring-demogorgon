@@ -1,59 +1,165 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
-    id 'org.springframework.boot' version '2.7.18'
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.7.21'
-    id "com.github.ben-manes.versions" version "0.51.0"
+    id 'org.springframework.boot' version '3.3.2'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
-apply plugin: 'io.spring.dependency-management'
+apply plugin: 'java'
+
+ext {
+    newrelic_version = '8.15.0'
+}
 
 group = 'org.springframework.samples'
 version = '1.0.0'
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-tasks.withType(KotlinCompile) {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_17
-}
 
 repositories {
     mavenCentral()
 }
 
-ext.webjarsFontawesomeVersion = "4.7.0"
-ext.webjarsBootstrapVersion = "5.1.3"
-
 dependencies {
+    implementation 'io.micrometer:micrometer-core'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'javax.cache:cache-api'
-    runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
-    runtimeOnly 'org.webjars:webjars-locator-core'
-    runtimeOnly "org.webjars.npm:bootstrap:${webjarsBootstrapVersion}"
-    runtimeOnly "org.webjars.npm:font-awesome:${webjarsFontawesomeVersion}"
-    runtimeOnly 'org.ehcache:ehcache'
-    runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'mysql:mysql-connector-java:8.0.28'
-    runtimeOnly 'org.postgresql:postgresql'
-    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
-    implementation 'com.newrelic.agent.java:newrelic-api:8.14.0'
-    implementation 'io.micrometer:micrometer-core:1.10.3'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
+    implementation 'jakarta.annotation:jakarta.annotation-api'
+    implementation "com.newrelic.agent.java:newrelic-api:$newrelic_version"
 
-    //  developmentOnly 'com.newrelic.agent.java:newrelic-java:7.8.0'
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'com.github.ben-manes.caffeine:caffeine'
+    runtimeOnly 'com.h2database:h2'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+build {
+    dependsOn 'buildFrontEnd'
+    mustRunAfter 'buildFrontEnd'
 }
 
 bootRun {
-    jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic.jar"]
+    dependsOn 'downloadNewRelicAgent', 'buildFrontEnd', 'build'
+    mustRunAfter 'downloadNewRelicAgent', 'buildFrontEnd', 'build'
+
+    jvmArgs = ["-javaagent:${projectDir}/newrelic/newrelic-v${newrelic_version}.jar"]
+}
+
+tasks.register('buildFrontEnd', DefaultTask) {
+    group 'New Relic'
+    doFirst {
+        exec {
+            String cmd = 'npm'
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                cmd = "npm.cmd"
+            }
+
+            workingDir "$rootDir/client"
+            commandLine cmd, 'run', 'build'
+        }
+
+        delete 'src/main/resources/static/react'
+
+        copy {
+            from "client/dist"
+            into "src/main/resources/static/react"
+        }
+    }
+
+    doLast {
+        def newRelicLicenseKey = System.getenv('BROWSER_LICENSE_KEY')
+        def newRelicAccountId = System.getenv('BROWSER_ACCOUNT_ID')
+        def newRelicTrustKey = System.getenv('BROWSER_TRUST_KEY')
+        def newRelicAgentId = System.getenv('BROWSER_AGENT_ID')
+        def newRelicApplicationId = System.getenv('BROWSER_APPLICATION_ID')
+
+        if (newRelicTrustKey == null && newRelicAccountId != null) {
+            newRelicTrustKey = newRelicAccountId
+        }
+
+        if (newRelicAgentId == null && newRelicApplicationId != null) {
+            newRelicAgentId = newRelicApplicationId
+        }
+
+        if (newRelicLicenseKey == null || newRelicAccountId == null || newRelicTrustKey == null || newRelicAgentId == null || newRelicApplicationId == null) {
+            throw new GradleException('BROWSER_* ENVIRONMENT VARIABLES NOT SET')
+        }
+
+        def templateJavaScript = file("$rootDir/browserMonitoringTemplate.js")
+        def indexFile = file("$rootDir/src/main/resources/static/react/index.html")
+
+        def indexFileContents = indexFile.getText()
+        def templateContents = templateJavaScript.getText()
+
+        templateContents = templateContents.replace("{{NEW_RELIC_APPLICATION_ID}}", newRelicApplicationId)
+        templateContents = templateContents.replace("{{NEW_RELIC_AGENT_ID}}", newRelicAgentId)
+        templateContents = templateContents.replace("{{NEW_RELIC_ACCOUNT_ID}}", newRelicAccountId)
+        templateContents = templateContents.replace("{{NEW_RELIC_TRUST_KEY}}", newRelicTrustKey)
+        templateContents = templateContents.replace("{{NEW_RELIC_LICENSE_KEY}}", newRelicLicenseKey)
+
+        templateContents = "<script type=\"text/javascript\">\n" + templateContents + "\n</script>"
+        def newIndexFileContent = indexFileContents.replace("<script id=\"new-relic-template\"><!-- FILLED OUT DURING BUILD --></script>", templateContents)
+
+        indexFile.write(newIndexFileContent)
+    }
+
+    outputs.file('src/main/resources/static/react/index.html')
+    outputs.dir('src/main/resources/static/react/assets')
+}
+
+tasks.register('downloadNewRelicAgent', DefaultTask) {
+    group 'New Relic'
+
+    onlyIf {
+        def agentExists = file("newrelic/newrelic-v${newrelic_version}.jar").exists()
+        def agentDoesNotExist = !agentExists
+
+        if (agentDoesNotExist) {
+            println "Downloading New Relic Java Agent v${newrelic_version}..."
+        } else {
+            println "Found Local Java Agent v${newrelic_version}; Skipping Task (delete " +
+                    "newrelic-v${newrelic_version}.jar to force the download again)"
+        }
+
+        return agentDoesNotExist
+    }
+
+    doFirst {
+        mkdir 'newrelic'
+        delete(fileTree("newrelic") {
+            include("**/newrelic-v*.jar")
+        })
+
+        def fileUrl = "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java-${newrelic_version}.zip"
+        def destinationFile = file("$rootDir/newrelic/newrelic.zip")
+
+        new URL(fileUrl).withInputStream { inputStream ->
+            destinationFile.withOutputStream { outputStream ->
+                outputStream << inputStream
+            }
+        }
+    }
+
+    doLast {
+        copy {
+            from zipTree(file('newrelic/newrelic.zip'))
+            into rootDir
+            exclude("newrelic/newrelic.yml")
+            exclude("newrelic/LICENSE")
+            exclude("newrelic/THIRD_PARTY_NOTICES.md")
+            exclude("newrelic/extension-example.xml")
+            exclude("newrelic/newrelic-api.jar")
+            exclude("newrelic/newrelic-api-javadoc.jar")
+            exclude("newrelic/newrelic-api-sources.jar")
+        }
+
+        file("newrelic/newrelic.jar").renameTo("newrelic/newrelic-v${newrelic_version}.jar")
+
+        delete("newrelic/newrelic.zip")
+    }
 }

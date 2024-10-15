@@ -14,3 +14,13 @@ _site/
 *.css
 !petclinic.css
 logs/
+/client/dist
+/client/node_modules
+.idea/
+
+src/main/resources/static/react
+
+.kotlin/*
+
+newrelic/extension.xsd
+newrelic/*.jar
