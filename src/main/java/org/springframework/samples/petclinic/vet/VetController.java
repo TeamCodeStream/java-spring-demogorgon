@@ -20,8 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.samples.petclinic.Util;
-import org.springframework.samples.petclinic.clm.RandomExceptionGenerator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,9 +52,6 @@ class VetController {
 		// Here we are returning an object of type 'Vets' rather than a collection of Vet
 		// objects so it is simpler for Object-Xml mapping
 		Vets vets = new Vets();
-		if (Util.isEvenDay() && System.currentTimeMillis() % 2 == 0) {
-			throw RandomExceptionGenerator.generateRandomException();
-		}
 		Page<Vet> paginated = findPaginated(page);
 		logger.info("Getting Vets for Page={}", page);
 		vets.getVetList().addAll(paginated.toList());

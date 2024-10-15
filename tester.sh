@@ -33,10 +33,6 @@ while true; do
     sleep 1
     curl -s -o /dev/null http://localhost:8081/vets/Carter
     sleep 1
-    # curl -s -o /dev/null http://localhost:8081/oups
-    # sleep 1
-    curl -s -o /dev/null http://localhost:8081/clm/error
-    sleep 1
 
     timestamp=$(date +"%Y-%m-%dT%H:%M:%S%z")
     echo "$timestamp Completed a full set of operations."

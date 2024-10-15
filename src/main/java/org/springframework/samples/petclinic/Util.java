@@ -36,10 +36,6 @@ public class Util {
 		}
 	}
 
-	public static boolean isEvenDay() {
-		return LocalDate.now().getDayOfYear() % 2 == 0;
-	}
-
 	public static boolean timeForFakeError() {
 		String nowMillisStr = Long.toString(System.currentTimeMillis());
 		return nowMillisStr.endsWith("7");
