@@ -31,6 +31,8 @@ while true; do
     sleep 1
     curl -s -o /dev/null http://localhost:8081/vets
     sleep 1
+    curl -s -o /dev/null http://localhost:8081/vets/carter
+    sleep 1
     # curl -s -o /dev/null http://localhost:8081/oups
     # sleep 1
     curl -s -o /dev/null http://localhost:8081/clm/error

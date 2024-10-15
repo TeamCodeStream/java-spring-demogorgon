@@ -25,6 +25,7 @@ import org.springframework.samples.petclinic.clm.RandomExceptionGenerator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -57,6 +58,7 @@ class VetController {
 			throw RandomExceptionGenerator.generateRandomException();
 		}
 		Page<Vet> paginated = findPaginated(page);
+		logger.info("Getting Vets for Page={}", page);
 		vets.getVetList().addAll(paginated.toList());
 		return addPaginationModel(page, paginated, model);
 
@@ -84,11 +86,21 @@ class VetController {
 		Vets vets = new Vets();
 		Collection<Vet> vetList = this.vetRepository.findAll();
 		for (Vet vet : vetList) {
-			String speciality = vet.getSpecialties().get(0).getName();
-			logger.info("Vet {} has speciality {}", vet.getFirstName(), speciality);
+			logger.info("Vet='{}' has specialities='{}'", vet.getFirstName(), vet.getSpecialties());
 		}
 		vets.getVetList().addAll(vetList);
 		return vets;
 	}
 
+	@GetMapping("/vets/{lastName}")
+	public @ResponseBody Vets showResourcesVetList(@PathVariable(name = "lastName") String lastName) {
+		// This will throw when exercised from tester.sh as the Vet we send in has no specialties. Poor guy.
+		Vets vets = new Vets();
+		Collection<Vet> vetList = this.vetRepository.findByLastName(lastName);
+		for (Vet vet : vetList) {
+			logger.info("Vet Speciality='{}'", vet.getSpecialties().get(0).getName());
+		}
+		vets.getVetList().addAll(vetList);
+		return vets;
+	}
 }
