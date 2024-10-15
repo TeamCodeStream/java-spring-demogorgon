@@ -66,7 +66,7 @@ class OwnerController {
 	@ModelAttribute("owner")
 	public Owner findOwner(@PathVariable(name = "ownerId", required = false) Integer ownerId) {
 		if(ownerId == null) {
-			logger.info("OwnerId NULL");
+			logger.info("OwnerId=NULL");
 			return new Owner();
 		}
 
@@ -89,6 +89,7 @@ class OwnerController {
 		}
 
 		this.owners.save(owner);
+		logger.info("Created New Owner={}", owner);
 		redirectAttributes.addFlashAttribute("message", "New Owner Created");
 		return "redirect:/owners/" + owner.getId();
 	}
@@ -104,6 +105,7 @@ class OwnerController {
 
 		// allow parameterless GET request for /owners to return all records
 		if (owner.getLastName() == null) {
+			logger.info("Retrieving ALL Owners");
 			owner.setLastName(""); // empty string signifies broadest possible search
 		}
 
@@ -160,6 +162,7 @@ class OwnerController {
 
 		owner.setId(ownerId);
 		this.owners.save(owner);
+		logger.info("Updated Owner={}", owner);
 		redirectAttributes.addFlashAttribute("message", "Owner Values Updated");
 		return "redirect:/owners/{ownerId}";
 	}

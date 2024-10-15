@@ -20,6 +20,7 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 COPY src ./src
 COPY client ./client
 COPY gradle ./gradle
+COPY newrelic ./newrelic
 COPY build.gradle settings.gradle browserMonitoringTemplate.js ./
 COPY --chmod=0755 gradlew ./
 
@@ -35,12 +36,13 @@ ENV BROWSER_TRUST_KEY=$BROWSER_TRUST_KEY
 ENV BROWSER_AGENT_ID=$BROWSER_AGENT_ID
 ENV BROWSER_APPLICATION_ID=$BROWSER_APPLICATION_ID
 
+RUN --mount=type=cache,target=/root/.gradle ./gradlew downloadNewRelicAgent --console=plain --info --no-daemon --no-watch-fs
 RUN --mount=type=cache,target=/root/.gradle ./gradlew build --console=plain --info --no-daemon --no-watch-fs
 
 FROM base AS final
 WORKDIR /app
 COPY --from=build /src/build/libs/petclinic-backend-1.0.0.jar .
-COPY ["newrelic/", "./newrelic"]
+COPY --from=build /src/newrelic/ ./newrelic/
 
 COPY --chmod=0755 entrypoint.sh /
 COPY --chmod=0755 tester.sh /app
