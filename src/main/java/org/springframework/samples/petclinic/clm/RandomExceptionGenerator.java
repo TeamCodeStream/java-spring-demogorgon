@@ -1,6 +1,8 @@
 package org.springframework.samples.petclinic.clm;
 
 import com.newrelic.api.agent.Trace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Random;
@@ -8,6 +10,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class RandomExceptionGenerator {
+
+	private static final Logger logger = LoggerFactory.getLogger(RandomExceptionGenerator.class);
 
 	private static final String[] words = {
 		"Quantum", "Flux", "Anomaly", "Paradox", "Entropy", "Singularity", "Nebula", "Vortex", "Pulsar", "Quasar",
@@ -63,6 +67,9 @@ public class RandomExceptionGenerator {
 				message.append(" ");
 			}
 		}
-		return message.toString();
+		String finalMessage = message.toString();
+		logger.info("Generated Random Message: {}", finalMessage);
+
+		return finalMessage;
 	}
 }
