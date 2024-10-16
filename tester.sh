@@ -27,6 +27,8 @@ while true; do
     sleep 1
     curl -s -o /dev/null http://localhost:8081/owners/4
     sleep 1
+    curl -s -o /dev/null http://localhost:8081/owners/1000/pets/10/edit
+    sleep 1
     curl -s -o /dev/null http://localhost:8081/owners/10/pets/10/edit
     sleep 1
     curl -s -o /dev/null http://localhost:8081/owners?page=0
