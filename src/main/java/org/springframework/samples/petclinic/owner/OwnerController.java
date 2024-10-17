@@ -20,6 +20,8 @@ import java.util.Map;
 
 import jakarta.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +51,7 @@ class OwnerController {
 	private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
 
 	private final OwnerRepository owners;
+	private static final Logger logger = LoggerFactory.getLogger(OwnerController.class);
 
 	public OwnerController(OwnerRepository clinicService) {
 		this.owners = clinicService;
@@ -61,7 +64,12 @@ class OwnerController {
 
 	@ModelAttribute("owner")
 	public Owner findOwner(@PathVariable(name = "ownerId", required = false) Integer ownerId) {
-		return ownerId == null ? new Owner() : this.owners.findById(ownerId);
+		if(ownerId == null) {
+			logger.info("OwnerId=NULL");
+			return new Owner();
+		}
+
+		return this.owners.findById(ownerId);
 	}
 
 	@GetMapping("/owners/new")
@@ -74,11 +82,13 @@ class OwnerController {
 	@PostMapping("/owners/new")
 	public String processCreationForm(@Valid Owner owner, BindingResult result, RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
+			logger.error("Error Creating New Owner; Validation Failed");
 			redirectAttributes.addFlashAttribute("error", "There was an error in creating the owner.");
 			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
 		}
 
 		this.owners.save(owner);
+		logger.info("Created New Owner={}", owner);
 		redirectAttributes.addFlashAttribute("message", "New Owner Created");
 		return "redirect:/owners/" + owner.getId();
 	}
@@ -94,6 +104,7 @@ class OwnerController {
 
 		// allow parameterless GET request for /owners to return all records
 		if (owner.getLastName() == null) {
+			logger.info("Retrieving ALL Owners");
 			owner.setLastName(""); // empty string signifies broadest possible search
 		}
 
@@ -125,6 +136,10 @@ class OwnerController {
 	}
 
 	private Page<Owner> findPaginatedForOwnersLastName(int page, String lastname) {
+		if(page < 1){
+			// defensive programming
+			throw new IllegalArgumentException("Page must be greater than 0");
+		}
 
 		int pageSize = 5;
 		Pageable pageable = PageRequest.of(page - 1, pageSize);
@@ -143,12 +158,14 @@ class OwnerController {
 	public String processUpdateOwnerForm(@Valid Owner owner, BindingResult result, @PathVariable("ownerId") int ownerId,
 			RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
+			logger.error("Error Updating Owner; Validation Failed");
 			redirectAttributes.addFlashAttribute("error", "There was an error in updating the owner.");
 			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
 		}
 
 		owner.setId(ownerId);
 		this.owners.save(owner);
+		logger.info("Updated Owner={}", owner);
 		redirectAttributes.addFlashAttribute("message", "Owner Values Updated");
 		return "redirect:/owners/{ownerId}";
 	}

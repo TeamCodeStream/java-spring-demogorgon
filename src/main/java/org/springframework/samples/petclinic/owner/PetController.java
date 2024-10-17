@@ -124,7 +124,13 @@ class PetController {
 	@GetMapping("/pets/{petId}/edit")
 	public String initUpdateForm(Owner owner, @PathVariable("petId") int petId, ModelMap model,
 			RedirectAttributes redirectAttributes) {
+		if(owner == null){
+			throw new IllegalArgumentException("Owner not found!");
+		}
 		Pet pet = owner.getPet(petId);
+		if(pet == null){
+			throw new IllegalArgumentException("Pet not found!");
+		}
 		model.put("pet", pet);
 		return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
 	}

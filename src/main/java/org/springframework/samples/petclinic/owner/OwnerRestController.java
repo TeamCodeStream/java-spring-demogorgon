@@ -1,8 +1,9 @@
 package org.springframework.samples.petclinic.owner;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.dto.OwnerDto;
@@ -21,6 +22,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/rest")
 public class OwnerRestController {
 
+	private static final Logger logger = LoggerFactory.getLogger(OwnerRestController.class);
+
 	private final OwnerRepository owners;
 
 	private final OwnerMapper mapper;
@@ -32,12 +35,13 @@ public class OwnerRestController {
 
 	@GetMapping("/owners")
 	private List<Owner> findListForOwnersLastName(String lastName) {
-		List<Owner> ownersResult = new ArrayList<>();
 		if (lastName != null) {
-			ownersResult = owners.findByLastName(lastName);
+			logger.info("Searching Owners By Last Name='{}'", lastName);
+			return owners.findByLastName(lastName);
 		}
-		return ownersResult.isEmpty() ? owners.findAll() : ownersResult;
 
+		logger.info("Retrieving ALL Owners");
+		return owners.findAll();
 	}
 
 	@GetMapping("/owners/{ownerId}")
@@ -48,6 +52,7 @@ public class OwnerRestController {
 	@PostMapping("/owners/new")
 	public ResponseEntity processCreationForm(@Valid @RequestBody Owner owner) {
 		this.owners.save(owner);
+		logger.info("Created New Owner={}", owner);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
@@ -56,6 +61,8 @@ public class OwnerRestController {
 		Owner owner = owners.findById(ownerId);
 		mapper.updateOwnerFromDto(ownerDto, owner);
 		owners.save(owner);
+
+		logger.info("Updated Owner={}", owner);
 
 		return new ResponseEntity<>(owner, HttpStatus.OK);
 	}

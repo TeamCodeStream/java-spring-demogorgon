@@ -47,6 +47,8 @@ jobs:
                     BROWSER_TRUST_KEY=${{ secrets.BROWSER_TRUST_KEY }},
                     BROWSER_AGENT_ID=${{ secrets.BROWSER_AGENT_ID }},
                     BROWSER_APPLICATION_ID=${{ secrets.BROWSER_APPLICATION_ID }}
+                    NEW_RELIC_METADATA_COMMIT=${{ github.sha }}
+                    NEW_RELIC_METADATA_RELEASE_TAG=${{ github.ref_name }}
 
             - name: Generate artifact attestation
               uses: actions/attest-build-provenance@v1

@@ -24,15 +24,13 @@ import static org.springframework.samples.petclinic.Util.*;
 public class ClmController {
 
 	private final OwnerRepository ownerRepository;
-	private final ErrorService errorService;
 	private final RestClient restClient;
 
 	private static final Logger logger = LoggerFactory.getLogger(ClmController.class);
 
-	public ClmController(OwnerRepository ownerRepository, ErrorService errorService, RestClient.Builder restClientBuilder) {
+	public ClmController(OwnerRepository ownerRepository,  RestClient.Builder restClientBuilder) {
 		this.restClient = restClientBuilder.build();
 		this.ownerRepository = ownerRepository;
-		this.errorService = errorService;
 	}
 
 	/**
@@ -45,19 +43,6 @@ public class ClmController {
 		logger.info("/clm/auto-only");
 		doWait();
 		return "welcome";
-	}
-
-	// What happens when error outside of controller
-	@GetMapping("/clm/error")
-	public String error(Model model) {
-		MetricService.increaseCount("/clm/error");
-		doWait();
-		logger.info("/clm/error");
-		if (timeForFakeError()) {
-			errorService.iAmError();
-		}
-		model.addAttribute("message", "on no!");
-		return "error";
 	}
 
 	/**

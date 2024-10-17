@@ -20,11 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.samples.petclinic.Util;
-import org.springframework.samples.petclinic.clm.RandomExceptionGenerator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -53,10 +52,8 @@ class VetController {
 		// Here we are returning an object of type 'Vets' rather than a collection of Vet
 		// objects so it is simpler for Object-Xml mapping
 		Vets vets = new Vets();
-		if (Util.isEvenDay() && System.currentTimeMillis() % 2 == 0) {
-			throw RandomExceptionGenerator.generateRandomException();
-		}
 		Page<Vet> paginated = findPaginated(page);
+		logger.info("Getting Vets for Page={}", page);
 		vets.getVetList().addAll(paginated.toList());
 		return addPaginationModel(page, paginated, model);
 
@@ -72,6 +69,10 @@ class VetController {
 	}
 
 	private Page<Vet> findPaginated(int page) {
+		if(page < 1) {
+			// defensive programming
+			throw new IllegalArgumentException("Page must be greater than 0");
+		}
 		int pageSize = 5;
 		Pageable pageable = PageRequest.of(page - 1, pageSize);
 		return vetRepository.findAll(pageable);
@@ -84,11 +85,20 @@ class VetController {
 		Vets vets = new Vets();
 		Collection<Vet> vetList = this.vetRepository.findAll();
 		for (Vet vet : vetList) {
-			String speciality = vet.getSpecialties().get(0).getName();
-			logger.info("Vet {} has speciality {}", vet.getFirstName(), speciality);
+			logger.info("Vet='{}' has specialities='{}'", vet.getFirstName(), vet.getSpecialties());
 		}
 		vets.getVetList().addAll(vetList);
 		return vets;
 	}
 
+	@GetMapping("/vets/{lastName}")
+	public @ResponseBody Vets showResourcesVetList(@PathVariable(name = "lastName") String lastName) {
+		Vets vets = new Vets();
+		Collection<Vet> vetList = this.vetRepository.findByLastName(lastName);
+		for (Vet vet : vetList) {
+			logger.info("Vet Speciality='{}'", vet.getSpecialties().get(0).getName());
+		}
+		vets.getVetList().addAll(vetList);
+		return vets;
+	}
 }
