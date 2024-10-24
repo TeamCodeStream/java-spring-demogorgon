@@ -91,8 +91,8 @@ public class ClmController {
 	 */
 	@GetMapping("/clm/xml")
 	public String xml(Model model) {
-		MetricService.increaseCount("/clm/xml");
 		logger.info("/clm/xml");
+		MetricService.increaseCount("/clm/xml");
 		setMessage(model, "Java/org.springframework.samples.petclinic.clm.ClmController/xml");
 		xmlMethod();
 		doWait();
@@ -101,7 +101,7 @@ public class ClmController {
 
 	@Timed
 	public void xmlMethod() {
-		doWait();
+		doWait(270);
 	}
 
 	/**
