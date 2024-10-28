@@ -4,7 +4,7 @@ import { Owner } from 'src/types/owner';
 
 export const ownersApi = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:8081/rest',
+    baseUrl: 'http://petclinic-demogorgon.staging-service.nr-ops.net:8081/rest',
     prepareHeaders: (headers) => {
       headers.set('Content-Type', 'application/json');
       return headers;
