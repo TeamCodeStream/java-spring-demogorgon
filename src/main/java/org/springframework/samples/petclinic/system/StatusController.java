@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 public class StatusController {
-	@GetMapping("/check")
+	@GetMapping("/status/check")
 	@ResponseStatus(HttpStatus.OK)
 	public void Check() {
 		// all good
