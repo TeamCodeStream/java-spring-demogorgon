@@ -32,4 +32,3 @@ jobs:
                       BROWSER_TRUST_KEY=${{ secrets.BROWSER_TRUST_KEY }}
                       BROWSER_AGENT_ID=${{ secrets.BROWSER_AGENT_ID }}
                       BROWSER_APPLICATION_ID=${{ secrets.BROWSER_APPLICATION_ID }}
-                      FOSSA_API_KEY=${{ secrets.FOSSA_API_KEY }}

@@ -41,8 +41,16 @@ ENV FOSSA_API_KEY=$FOSSA_API_KEY
 RUN --mount=type=cache,target=/root/.gradle ./gradlew downloadNewRelicAgent --console=plain --info --no-daemon --no-watch-fs
 RUN --mount=type=cache,target=/root/.gradle ./gradlew build --console=plain --info --no-daemon --no-watch-fs
 
-RUN curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
-RUN fossa analyze
+RUN if [ -z "$FOSSA_API_KEY" ] ; then \
+    echo --SKIPPING FOSSA CLI DOWNLOAD ; \
+    else \
+        curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash; \
+    fi
+RUN if [ -z "$FOSSA_API_KEY" ] ; then \
+    echo --SKIPPING FOSSA SCAN ; \
+    else \
+        fossa analyze; \
+    fi
 
 FROM base AS final
 WORKDIR /app
