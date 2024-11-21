@@ -92,7 +92,7 @@ class VetController {
 	}
 
 	@GetMapping("/vets/{lastName}")
-	public @ResponseBody Vets showResourcesVetList(@PathVariable(name = "lastName") String lastName) {
+	public @ResponseBody Vets showResourcesVetListByLastName(@PathVariable(name = "lastName") String lastName) {
 		Vets vets = new Vets();
 		Collection<Vet> vetList = this.vetRepository.findByLastName(lastName);
 		for (Vet vet : vetList) {
