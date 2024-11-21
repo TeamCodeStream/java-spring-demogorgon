@@ -29,15 +29,20 @@ ARG BROWSER_ACCOUNT_ID
 ARG BROWSER_TRUST_KEY
 ARG BROWSER_AGENT_ID
 ARG BROWSER_APPLICATION_ID
+ARG FOSSA_API_KEY
 
 ENV BROWSER_LICENSE_KEY=$BROWSER_LICENSE_KEY
 ENV BROWSER_ACCOUNT_ID=$BROWSER_ACCOUNT_ID
 ENV BROWSER_TRUST_KEY=$BROWSER_TRUST_KEY
 ENV BROWSER_AGENT_ID=$BROWSER_AGENT_ID
 ENV BROWSER_APPLICATION_ID=$BROWSER_APPLICATION_ID
+ENV FOSSA_API_KEY=$FOSSA_API_KEY
 
 RUN --mount=type=cache,target=/root/.gradle ./gradlew downloadNewRelicAgent --console=plain --info --no-daemon --no-watch-fs
 RUN --mount=type=cache,target=/root/.gradle ./gradlew build --console=plain --info --no-daemon --no-watch-fs
+
+RUN curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
+RUN fossa analyze
 
 FROM base AS final
 WORKDIR /app
