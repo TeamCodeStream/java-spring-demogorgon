@@ -135,7 +135,7 @@ tasks.register('downloadNewRelicAgent', DefaultTask) {
             include("**/newrelic-v*.jar")
         })
 
-        def fileUrl = "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java-${newrelic_version}.zip"
+        def fileUrl = "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/${newrelic_version}/newrelic-java-${newrelic_version}.zip"
         def destinationFile = file("$rootDir/newrelic/newrelic.zip")
 
         new URL(fileUrl).withInputStream { inputStream ->
