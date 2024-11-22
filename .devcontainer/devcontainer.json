@@ -7,7 +7,7 @@
 		"storage": "32gb"
 	},
 	"features": {
-		"ghcr.io/devcontainers/features/java:1.2.1": {
+		"ghcr.io/devcontainers/features/java:1.6.2": {
 			"version": "none",
 			"installMaven": "false",
 			"installGradle": "true"
@@ -19,18 +19,12 @@
 			"settings": {
 				"codestream.serverUrl": "https://codestream-api-v2-us1.service.newrelic.com",
 				"diffEditor.codeLens": true,
-				"workbench.colorTheme": "GitHub Dark Default",
+				"workbench.colorTheme": "Default Dark Modern",
 				"remote.extensionKind": {
-					"codestream.codestream": [
-						"workspace"
-					]
+					"codestream.codestream": ["workspace"]
 				}
 			},
-			"extensions": [
-				"redhat.java",
-				"codestream.codestream",
-				"ms-azuretools.vscode-docker"
-			]
+			"extensions": ["redhat.java", "codestream.codestream", "ms-azuretools.vscode-docker"]
 		}
 	}
 }
