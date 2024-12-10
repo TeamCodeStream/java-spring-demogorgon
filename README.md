@@ -1,34 +1,8 @@
-# Modified Spring Pet Clinic for testing NR's CLM
+# CodeStream Demo Repository
 
-## Getting the app running with docker
+Be sure to refer to the [CodeStream Demo Setup & Script](https://docs.google.com/document/d/1_TF6-McJ5TIMAs-ajnBTnMSMRfpR9oapoi16StCPLLs/edit?usp=sharing) document, and help is always available in the [#codestream-demo-setup](https://newrelic.enterprise.slack.com/archives/C04RAE53YDD) channel on Slack.
 
-```
-git clone https://github.com/meiao/spring-petclinic.git
-cd spring-petclinic
-NEW_RELIC_LICENSE_KEY=12345 docker-compose up -d --build
-```
+Open the following files before you start your demo.
 
-Agent, tester, and app logs can be found mounted in ./logs
-
-The docker app will generate some traffic that should be visible in NR1 under "CLM Test App"
-
-## Getting the code and running without docker
-
-```
-git clone https://github.com/meiao/spring-petclinic.git
-cd spring-petclinic
-NEW_RELIC_LICENSE_KEY=12345 ./gradlew bootRun
-```
-Substitute 12345 with your New Relic license key.
-
-You can then access petclinic here:
-- react: http://localhost:8081/react
-- legacy app: http://localhost:8081/
-
-The main page will have some links that exercise auto and manual instrumentation in different modes.
-
-The respective code is in ClmController.java.
-
-The top menu will take you to the regular Spring Pet Clinic application.
-
-Requires Java 11 or higher.
+- [ClmController.java](src/java-spring-demogorgon/src/main/java/org/springframework/samples/petclinic/clm/ClmController.java)
+- [demo_queries.nrql](demo_queries.nrql)
