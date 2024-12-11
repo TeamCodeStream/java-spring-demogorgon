@@ -21,10 +21,23 @@
 				"diffEditor.codeLens": true,
 				"workbench.colorTheme": "Default Dark Modern",
 				"remote.extensionKind": {
-					"codestream.codestream": ["workspace"]
+					"codestream.codestream": [
+						"workspace"
+					]
 				}
 			},
-			"extensions": ["redhat.java", "codestream.codestream", "ms-azuretools.vscode-docker"]
+			"extensions": [
+				"redhat.java",
+				"codestream.codestream",
+				"ms-azuretools.vscode-docker"
+			]
+		},
+		"codespaces": {
+			"openFiles": [
+				"./README.md",
+				"./src/main/java/org/springframework/samples/petclinic/clm/ClmController.java",
+				"./demo_queries.nrql"
+			]
 		}
 	}
 }
