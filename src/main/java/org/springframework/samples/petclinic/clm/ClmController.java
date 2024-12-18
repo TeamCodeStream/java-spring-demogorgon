@@ -170,7 +170,7 @@ public class ClmController {
 
 	@Trace
 	private void dbMethod() {
-		ownerRepository.findAll(Pageable.ofSize(100000));
+		ownerRepository.findAll(Pageable.ofSize(1000000));
 	}
 
 
