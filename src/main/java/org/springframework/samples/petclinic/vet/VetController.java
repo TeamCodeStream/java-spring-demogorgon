@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.samples.petclinic.loggers.VetLogger;
+import org.springframework.samples.petclinic.validation.ControllerValidation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,10 +71,8 @@ class VetController {
 	}
 
 	private Page<Vet> findPaginated(int page) {
-		if(page < 1) {
-			// defensive programming
-			throw new IllegalArgumentException("Page must be greater than 0");
-		}
+		ControllerValidation.ValidatePageNumber(page);
+
 		int pageSize = 5;
 		Pageable pageable = PageRequest.of(page - 1, pageSize);
 		return vetRepository.findAll(pageable);
@@ -96,7 +96,7 @@ class VetController {
 		Vets vets = new Vets();
 		Collection<Vet> vetList = this.vetRepository.findByLastName(lastName);
 		for (Vet vet : vetList) {
-			logger.info("Vet Speciality='{}'", vet.getSpecialties().get(0).getName());
+			VetLogger.LogSpecialty(vet);
 		}
 		vets.getVetList().addAll(vetList);
 		return vets;
