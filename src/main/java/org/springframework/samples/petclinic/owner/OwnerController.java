@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.samples.petclinic.validation.ControllerValidation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -136,10 +137,7 @@ class OwnerController {
 	}
 
 	private Page<Owner> findPaginatedForOwnersLastName(int page, String lastname) {
-		if(page < 1){
-			// defensive programming
-			throw new IllegalArgumentException("Page must be greater than 0");
-		}
+		ControllerValidation.ValidatePageNumber(page);
 
 		int pageSize = 5;
 		Pageable pageable = PageRequest.of(page - 1, pageSize);

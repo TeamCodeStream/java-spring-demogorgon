@@ -18,6 +18,7 @@ package org.springframework.samples.petclinic.owner;
 import java.time.LocalDate;
 import java.util.Collection;
 
+import org.springframework.samples.petclinic.validation.ControllerValidation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
@@ -124,13 +125,10 @@ class PetController {
 	@GetMapping("/pets/{petId}/edit")
 	public String initUpdateForm(Owner owner, @PathVariable("petId") int petId, ModelMap model,
 			RedirectAttributes redirectAttributes) {
-		if(owner == null){
-			throw new IllegalArgumentException("Owner not found!");
-		}
+		ControllerValidation.ValidateNotNull(owner, "Owner");
 		Pet pet = owner.getPet(petId);
-		if(pet == null){
-			throw new IllegalArgumentException("Pet not found!");
-		}
+
+		ControllerValidation.ValidateNotNull(pet, "Pet");
 		model.put("pet", pet);
 		return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
 	}
