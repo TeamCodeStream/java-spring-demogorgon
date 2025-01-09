@@ -140,9 +140,12 @@ class OwnerController {
 		ControllerValidation.ValidatePageNumber(page);
 
 		int pageSize = 5;
-		Pageable pageable = PageRequest.of(page - 1, pageSize);
-		return owners.findByLastName(lastname, pageable);
+		int startPage = page - 1;
 
+		ControllerValidation.ValidatePageNumber(startPage);
+		Pageable pageable = PageRequest.of(startPage, pageSize);
+
+		return owners.findByLastName(lastname, pageable);
 	}
 
 	@GetMapping("/owners/{ownerId}/edit")
