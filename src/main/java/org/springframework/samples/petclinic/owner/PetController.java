@@ -75,9 +75,7 @@ class PetController {
 		}
 
 		Owner owner = this.owners.findById(ownerId);
-		if (owner == null) {
-			throw new IllegalArgumentException("Owner ID not found: " + ownerId);
-		}
+		ControllerValidation.ValidateNotNull(owner, "Owner");
 		return owner.getPet(petId);
 	}
 
