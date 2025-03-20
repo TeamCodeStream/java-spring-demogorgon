@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { OwnerDetails } from 'src/pages/OwnerDetails';
 import { NavigationBar } from './navbar/NavigationBar';
-import { Error } from './pages/Error';
+import { ErrorPage } from './pages/ErrorPage.tsx';
 import { FindOwner } from './pages/FindOwner';
 import { Home } from './pages/Home';
 import { OwnerForm } from './pages/OwnerForm';
@@ -30,7 +30,7 @@ function App() {
         />
         <Routes>
           <Route index={true} path="/" element={<Home />} />
-          <Route path="/oups" element={<Error />} />
+          <Route path="/oups" element={<ErrorPage />} />
           <Route path="/home" element={<Home />} />
           <Route path="/vets" element={<Veterinarians />} />
           <Route path="owners">
