@@ -57,9 +57,10 @@ RUN if [ -z "$FOSSA_API_KEY" ] ; then \
 RUN if [ -z "$NEW_RELIC_API_KEY" ] ; then \
     echo --SKIPPING SOURCE MAP UPLOAD ; \
     else \
-      filename=$(ls /src/client/dist/assets/*.js | grep -v '.map.js' | xargs -n 1 basename) && \
+      filename=$(ls /client/dist/assets/*.js | grep -v '.map.js' | xargs -n 1 basename) && \
+      echo "JavaScript file is: $filename" && \
       curl -H "Api-Key: $NEW_RELIC_API_KEY" \
-           -F "sourcemap=/src/client/dist/assets/$filename.map" \
+           -F "sourcemap=/client/dist/assets/$filename.map" \
            -F "javascriptUrl=https://petclinic-demogorgon.staging-service.nr-ops.net/react/assets/$filename" \
            https://sourcemaps.service.newrelic.com/v2/applications/$BROWSER_APPLICATION_ID/sourcemaps ;\
     fi
